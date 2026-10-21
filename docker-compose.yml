@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: shoe-store-mysql
+    environment:
+      MYSQL_DATABASE: shoestore
+      MYSQL_USER: shoestore
+      MYSQL_PASSWORD: shoestore_dev
+      MYSQL_ROOT_PASSWORD: root_dev
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: shoe-store-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shoestore?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: shoestore
+      SPRING_DATASOURCE_PASSWORD: shoestore_dev
+      JWT_SECRET: local-development-secret-change-this-before-production-123456789
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_demo}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-demo_secret}
+    ports:
+      - "8181:8181"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: shoe-store-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
