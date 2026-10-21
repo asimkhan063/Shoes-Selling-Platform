@@ -11,7 +11,7 @@ A local-development shoe shopping platform built with Spring Boot, MySQL, React,
 
 1. In this folder, copy `.env.example` to `.env` and add your Razorpay **test** keys.
 2. Start the stack: `docker compose up --build`
-3. Open the React app at http://localhost:5173 and the API at http://localhost:8080/api/health.
+3. Open the React app at http://localhost:5173 and the API at http://localhost:8181/api/health.
 
 Local default passwords and JWT secrets are for development only. Replace them before deployment.
 
